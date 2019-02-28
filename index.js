@@ -40,7 +40,9 @@ Characteristics of a Pure Function
 */
 
 
-function todos (state = [], action) {     // if state is undefined, set it to empty array
+// Reducer function (takes state and action and reduces them to new state)
+// if state is undefined, set it to empty array
+function todos (state = [], action) {
   if (action.type === 'ADD_TODO') {
     return state.concat([action.todo])
   }
@@ -50,7 +52,7 @@ function todos (state = [], action) {     // if state is undefined, set it to em
 
 
 // 'createStore()' is function we'll invoke to create a new store
-function createStore() {
+function createStore(reducer) {
   // The store should have four parts
   // 1. The state
   // 2. Get the state.
@@ -73,8 +75,32 @@ function createStore() {
     }
   }
 
+  // the purpose of dispatch is to update the state (in the most predictable way)
+  const dispatch = (action) => {
+    // call todos (which will give us a new state)
+    state = reducer(state, action)
+    // loop over listeners and invoke them (so they know the state is updated)
+    listeners.forEach((listener) => listener())
+  }
+
   return {
     getState,
     subscribe,
+    dispatch,
   }
 }
+
+
+/*
+Internally, "createStore" gets the new state of the store by invoking "reducer", 
+passing it the current state and the action which was dispatched.
+*/
+const store = createStore(todos);
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: {
+    id: 0,
+    name: 'Learn Redux',
+    complete: false,
+  }
+})
