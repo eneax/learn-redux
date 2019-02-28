@@ -45,9 +45,14 @@ Characteristics of a Pure Function
 function todos (state = [], action) {
   if (action.type === 'ADD_TODO') {
     return state.concat([action.todo])
+  } else if (action.type === 'REMOVE_TODO') {
+    return state.filter((todo) => todo.id !== action.id)
+  } else if (action.type === 'TOGGLE_TODO') {
+    return state.map((todo) => todo.id !== action.id ? todo : 
+      Object.assign({}, todo, { complete: !todo.complete }))
+  } else {
+    return state
   }
-
-  return state
 }
 
 
@@ -104,3 +109,12 @@ store.dispatch({
     complete: false,
   }
 })
+
+
+/* 
+Object.assign({}, todo, { complete: !todo.complete }))
+
+* create brand new object
+* merge all the properties of todo into that new object
+* instead of using the default complete, change it to its opposite
+*/
