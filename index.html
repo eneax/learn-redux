@@ -38,7 +38,7 @@
     const REMOVE_GOAL = 'REMOVE_GOAL';
 
 
-    // function creators
+    // Action Creators
     function addTodoAction(todo) {
       return {
         type: ADD_TODO,
@@ -75,7 +75,7 @@
     }
 
 
-    // Reducer functions
+    // Reducers
     function todos (state = [], action) {
       switch(action.type) {
         case ADD_TODO:
@@ -103,6 +103,7 @@
     }
 
 
+    // Create Store
     const store = Redux.createStore(Redux.combineReducers({
       todos,  // todos: todos(state.todos, action)
       goals,  // goals: goals(state.goals, action)
