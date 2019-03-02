@@ -69,6 +69,10 @@ Once we put all the State in one place, we need three more things:
 * Redux goes through all the reducers in order to identify the case related to that specific action and when it finds it, it returns a brand new state. When Redux is done with one reducer, it moves to the next and if it doesn't respond to the specific event that occurred, it return what was the previous state.
 
 
+* Redux Middleware: 
+  - it allows you to hook into the moment after an action is dispatched and before the reducer runs
+  - correct syntax: (store) => (next) => (action) => {}
+
 
 <!-- 
 Object.assign({}, todo, { complete: !todo.complete }))
