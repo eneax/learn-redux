@@ -75,7 +75,8 @@
     }
 
 
-    // Middleware function: check if someone add something containing the word 'bitcoin'
+    // Middleware Functions 
+    // Check if someone add something containing the word 'bitcoin'
     const checker = (store) => (next) => (action) => {
       if (
         action.type === ADD_TODO &&
@@ -93,6 +94,18 @@
 
       // next is either the next middleware in the middleware-chain or the final dispatch
       return next(action)
+    }
+
+
+    // Logger: logs the specific action that is dispatched and the new state based on that dispatched action
+    const logger = (store) => (next) => (action) => {
+      console.group(action.type);
+      console.log('The action: ', action);
+      // if next is the last middleware, it will be a dispatch
+      const result = next(action);
+      console.log('The new State: ', store.getState());
+      console.groupEnd();
+      return result;
     }
 
 
@@ -128,7 +141,7 @@
     const store = Redux.createStore(Redux.combineReducers({
       todos,  // todos: todos(state.todos, action)
       goals,  // goals: goals(state.goals, action)
-    }), Redux.applyMiddleware(checker));
+    }), Redux.applyMiddleware(checker, logger));
 
     store.subscribe(() => {
       const { todos, goals } = store.getState();
