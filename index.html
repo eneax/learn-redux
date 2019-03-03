@@ -140,6 +140,17 @@
       }
     }
 
+    function handleInitialData() {
+      return (dispatch) => {
+        return Promise.all([
+          API.fetchTodos(),
+          API.fetchGoals(),
+        ]).then(([ todos, goals ]) => {
+          dispatch(receiveDataAction(todos, goals))
+        })
+      }
+    }
+
 
     // Middleware Functions 
     // Check if someone add something containing the word 'bitcoin'
@@ -335,12 +346,7 @@
       componentDidMount() {
         const { store } = this.props;
 
-        Promise.all([
-          API.fetchTodos(),
-          API.fetchGoals(),
-        ]).then(([ todos, goals ]) => {
-          store.dispatch(receiveDataAction(todos, goals));
-        })
+        store.dispatch(handleInitialData());
 
         // Re-render (just like setState), so we'll get a new updated State
         store.subscribe(() => this.forceUpdate());
