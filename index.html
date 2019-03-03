@@ -77,6 +77,22 @@
       }
     }
 
+    // it works because we created a thunk middleware
+    function handleDeleteTodo(todo) {
+      return (dispatch) => {
+        // instantly remove item from Store locally
+        dispatch(removeTodoAction(todo.id));
+
+        // then make request to delete also from the database
+        return API.deleteTodo(todo.id)
+          .catch(() => {
+            // if there is an error, add item back to UI
+            dispatch(addTodoAction(todo));
+            alert('An error occurred. Try again.');
+          })
+      }
+    }
+
 
     // Middleware Functions 
     // Check if someone add something containing the word 'bitcoin'
@@ -109,6 +125,15 @@
       console.log('The new State: ', store.getState());
       console.groupEnd();
       return result;
+    }
+
+
+    const thunk = (store) => (next) => (action) => {
+      if (typeof action === 'function') {
+        return action(store.dispatch)
+      }
+
+      return next(action);
     }
 
 
@@ -159,7 +184,7 @@
       todos,  // todos: todos(state.todos, action)
       goals,  // goals: goals(state.goals, action)
       loading,
-    }), Redux.applyMiddleware(checker, logger));
+    }), Redux.applyMiddleware(checker, logger, thunk));
 
   </script>
 
@@ -199,16 +224,7 @@
       }
 
       removeItem = (todo) => {
-        // instantly remove item from Store locally
-        this.props.store.dispatch(removeTodoAction(todo.id));
-
-        // then make request to delete also from the database
-        return API.deleteTodo(todo.id)
-          .catch(() => {
-            // if there is an error, add item back to UI
-            this.props.store.dispatch(addTodoAction(todo));
-            alert('An error occurred. Try again.');
-          })
+        this.props.store.dispatch(handleDeleteTodo(todo));
       }
 
       toggleItem = (id) => {
