@@ -199,7 +199,16 @@
       }
 
       removeItem = (todo) => {
+        // instantly remove item from Store locally
         this.props.store.dispatch(removeTodoAction(todo.id));
+
+        // then make request to delete also from the database
+        return API.deleteTodo(todo.id)
+          .catch(() => {
+            // if there is an error, add item back to UI
+            this.props.store.dispatch(addTodoAction(todo));
+            alert('An error occurred. Try again.');
+          })
       }
 
       toggleItem = (id) => {
@@ -240,7 +249,13 @@
       }
 
       removeItem = (goal) => {
-        this.props.store.dispatch(removeGoalAction(goal.id))
+        this.props.store.dispatch(removeGoalAction(goal.id));
+
+        return API.deleteGoal(goal.id)
+          .catch(() => {
+            this.props.store.dispatch(addGoalAction(goal));
+            alert('An error occurred. Try again.');
+          })
       }
 
       render() {
