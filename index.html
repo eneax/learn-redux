@@ -13,6 +13,8 @@
   <script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
   <!-- Fake API -->
   <script src='https://tylermcginnis.com/goals-todos-api/index.js'></script>
+  <!-- redux-thunk Middleware -->
+  <script src='https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js'></script>
 </head>
 <body>
   <div id="app"></div>
@@ -186,15 +188,6 @@
     }
 
 
-    const thunk = (store) => (next) => (action) => {
-      if (typeof action === 'function') {
-        return action(store.dispatch)
-      }
-
-      return next(action);
-    }
-
-
     // Reducers
     function todos (state = [], action) {
       switch(action.type) {
@@ -242,7 +235,7 @@
       todos,  // todos: todos(state.todos, action)
       goals,  // goals: goals(state.goals, action)
       loading,
-    }), Redux.applyMiddleware(checker, logger, thunk));
+    }), Redux.applyMiddleware(checker, logger, ReduxThunk.default));
 
   </script>
 
