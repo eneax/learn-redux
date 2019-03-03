@@ -77,6 +77,30 @@
       }
     }
 
+    function handleAddTodo(name, cb) {
+      return (dispatch) => {
+        return API.saveTodo(name)
+          .then((todo) => {
+            dispatch(addTodoAction(todo));
+            cb();
+          })
+          .catch(() => alert('An error occurred. Try again.'));
+      }
+    }
+
+    function handleToggleTodo(id) {
+      return (dispatch) => {
+        dispatch(toggleTodoAction(id))
+
+        return API.saveTodoToggle(id)
+          .catch(() => {
+            dispatch(toggleTodoAction(id));
+            alert('An error occurred. Try again.');
+          })
+      }
+    }
+    
+
     // it works because we created a thunk middleware
     function handleDeleteTodo(todo) {
       return (dispatch) => {
@@ -236,14 +260,11 @@
     class Todos extends React.Component {
       addItem = (e) => {
         e.preventDefault();
-        const name = this.input.value;
 
-        return API.saveTodo(name)
-          .then((todo) => {
-            this.props.store.dispatch(addTodoAction(todo))
-            this.input.value = '';
-          })
-          .catch(() => alert('An error occurred. Try again.'))
+        this.props.store.dispatch(handleAddTodo(
+          this.input.value,
+          () => this.input.value = ''
+        ));
       }
 
       removeItem = (todo) => {
@@ -251,13 +272,7 @@
       }
 
       toggleItem = (id) => {
-        this.props.store.dispatch(toggleTodoAction(id));
-
-        return API.saveTodoToggle(id)
-          .catch(() => {
-            this.props.store.dispatch(toggleTodoAction(id));
-            alert('An error occurred. Try again.');
-          })
+        this.props.store.dispatch(handleToggleTodo(id));
       }
 
       render() {
