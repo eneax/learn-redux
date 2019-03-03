@@ -74,6 +74,11 @@ Once we put all the State in one place, we need three more things:
   - correct syntax: (store) => (next) => (action) => {}
 
 
+* Thunks allow you to:
+  - dispatch inside an action creator
+  - return a function from an action creator
+
+
 <!-- 
 Object.assign({}, todo, { complete: !todo.complete }))
 * creates brand new object
