@@ -1,3 +1,7 @@
+import { ADD_TODO } from '../actions/todos'
+import { ADD_GOAL } from '../actions/goals'
+
+
 // Check if someone add something containing the word 'bitcoin'
 const checker = (store) => (next) => (action) => {
   if (
