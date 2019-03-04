@@ -300,19 +300,9 @@
       }
     }
 
-    class ConnectedTodos extends React.Component {
-      render() {
-        return (
-          <Context.Consumer>
-            {(store) => {
-              const { todos } = store.getState()
-
-              return <Todos todos={todos} dispatch={store.dispatch} />
-            }}
-          </Context.Consumer>
-        )
-      }
-    }
+    const ConnectedTodos = connect((state) => ({
+      todos: state.todos
+    }))(Todos)
 
 
     class Goals extends React.Component {
@@ -349,34 +339,19 @@
       }
     }
 
-    class ConnectedGoals extends React.Component {
-      render() {
-        return (
-          <Context.Consumer>
-            {(store) => {
-              const { goals } = store.getState()
-
-              return <Goals goals={goals} dispatch={store.dispatch} />
-            }}
-          </Context.Consumer>
-        )
-      }
-    }
+    const ConnectedGoals = connect((state) => ({
+      goals: state.goals
+    }))(Goals)
 
 
     class App extends React.Component {
       componentDidMount() {
-        const { store } = this.props;
-
-        store.dispatch(handleInitialData());
-
-        // Re-render (just like setState), so we'll get a new updated State
-        store.subscribe(() => this.forceUpdate());
+        const { dispatch } = this.props;
+        dispatch(handleInitialData());
       }
 
       render() {
-        const { loading } = this.props.store.getState()
-        
+        const { loading } = this.props
         if (loading === true) {
           return <h3>Loading...</h3>
         }
@@ -391,18 +366,17 @@
     }
 
 
-    // Context
-    class ConnectedApp extends React.Component {
-      render() {
-        return (
-          <Context.Consumer>
-            {(store) => (
-              <App store={store} />
-            )}
-          </Context.Consumer>
-        )
-      }
-    }
+    /*
+      - We want the user of our library to never use Context.Consumer
+      - So we create a connect function
+      - purpose of connect: Render any component, passing that component any data it needs from the store.
+      - First you invoke 'connect()', then you invoke the result of that (which will be a function), passing it the component you want to render
+      - under the hood, it takes care of '.subscribe()' 
+    */
+
+    const ConnectedApp = connect((state) => ({
+      loading: state.loading
+    }))(App)
 
     const Context = React.createContext();
 
