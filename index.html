@@ -15,6 +15,8 @@
   <script src='https://tylermcginnis.com/goals-todos-api/index.js'></script>
   <!-- redux-thunk Middleware -->
   <script src='https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js'></script>
+  <!-- react-redux (official way to bind react and redux) -->
+  <script src='https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js'></script>
 </head>
 <body>
   <div id="app"></div>
@@ -300,7 +302,7 @@
       }
     }
 
-    const ConnectedTodos = connect((state) => ({
+    const ConnectedTodos = ReactRedux.connect((state) => ({
       todos: state.todos
     }))(Todos)
 
@@ -339,7 +341,7 @@
       }
     }
 
-    const ConnectedGoals = connect((state) => ({
+    const ConnectedGoals = ReactRedux.connect((state) => ({
       goals: state.goals
     }))(Goals)
 
@@ -365,72 +367,17 @@
       }
     }
 
-    const ConnectedApp = connect((state) => ({
+    const ConnectedApp = ReactRedux.connect((state) => ({
       loading: state.loading
     }))(App)
 
 
-    const Context = React.createContext();
-
-    /*
-      - We want the user of our library to never use Context.Consumer
-      - So we create a connect function
-      - purpose of connect: Render any component, passing that component any data it needs from the store.
-      - First you invoke 'connect()', then you invoke the result of that (which will be a function), passing it the component you want to render
-      - under the hood, it takes care of '.subscribe()' 
-    */
-
-    function connect(mapStateToProps) {
-      return (Component) => {
-        class Receiver extends React.Component {
-          componentDidMount() {
-            const { subscribe } = this.props.store;
-
-            this.unsubscribe = subscribe(() => this.forceUpdate());
-          }
-          componentWillUnmount() {
-            this.unsubscribe();
-          }
-          render() {
-            const { dispatch, getState } = this.props.store;
-            const state = getState();
-            const stateNeeded = mapStateToProps(state);
-
-            return <Component {...stateNeeded} dispatch={dispatch} />
-          }
-        }
-
-        class ConnectedComponent extends React.Component {
-          render() {
-            return (
-              <Context.Consumer>
-                {(store) => <Receiver store={store} />}
-              </Context.Consumer>
-            )
-          }
-        }
-        return ConnectedComponent;
-      }
-    }
-
-    class Provider extends React.Component {
-      render() {
-        return (
-          <Context.Provider value={this.props.store}>
-            {this.props.children}
-          </Context.Provider>
-        )
-      }
-    }
-
-
     ReactDOM.render(
-      <Provider store={store}>
+      <ReactRedux.Provider store={store}>
         <ConnectedApp />
-      </Provider>,
+      </ReactRedux.Provider>,
       document.getElementById('app')
     );
-
 
 
   </script>
