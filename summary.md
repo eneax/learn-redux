@@ -79,6 +79,10 @@ Once we put all the State in one place, we need three more things:
   - return a function from an action creator
 
 
+* React's Context API:
+  - allows you to avoid "prop drilling" when you have to pass props through components just to get it to a child component
+  - React.createContext() will return you an object with what two properties: .Provider and .Consumer
+
 <!-- 
 Object.assign({}, todo, { complete: !todo.complete }))
 * creates brand new object
