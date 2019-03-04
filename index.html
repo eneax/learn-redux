@@ -365,6 +365,12 @@
       }
     }
 
+    const ConnectedApp = connect((state) => ({
+      loading: state.loading
+    }))(App)
+
+
+    const Context = React.createContext();
 
     /*
       - We want the user of our library to never use Context.Consumer
@@ -374,11 +380,38 @@
       - under the hood, it takes care of '.subscribe()' 
     */
 
-    const ConnectedApp = connect((state) => ({
-      loading: state.loading
-    }))(App)
+    function connect(mapStateToProps) {
+      return (Component) => {
+        class Receiver extends React.Component {
+          componentDidMount() {
+            const { subscribe } = this.props.store;
 
-    const Context = React.createContext();
+            this.unsubscribe = subscribe(() => this.forceUpdate());
+          }
+          componentWillUnmount() {
+            this.unsubscribe();
+          }
+          render() {
+            const { dispatch, getState } = this.props.store;
+            const state = getState();
+            const stateNeeded = mapStateToProps(state);
+
+            return <Component {...stateNeeded} dispatch={dispatch} />
+          }
+        }
+
+        class ConnectedComponent extends React.Component {
+          render() {
+            return (
+              <Context.Consumer>
+                {(store) => <Receiver store={store} />}
+              </Context.Consumer>
+            )
+          }
+        }
+        return ConnectedComponent;
+      }
+    }
 
     class Provider extends React.Component {
       render() {
