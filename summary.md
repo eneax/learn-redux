@@ -83,6 +83,14 @@ Once we put all the State in one place, we need three more things:
   - allows you to avoid "prop drilling" when you have to pass props through components just to get it to a child component
   - React.createContext() will return you an object with what two properties: .Provider and .Consumer
 
+
+* Connecting Components:
+  - the first argument passed to "connect" is a function which specifies which data from the store the component needs
+  - "connect" returns a function which will receive the component to render when it's invoked
+  - the "connect" function is useful in order to create a new component which will subscribe to and be passed data from the store as props
+
+
+
 <!-- 
 Object.assign({}, todo, { complete: !todo.complete }))
 * creates brand new object
